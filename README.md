@@ -1,6 +1,6 @@
 # Participants
   - FOUMBI DJOMO Ranyl Josué
-  - 
+  - MANFO JIENGAP Rosvalde Florient
 
 # commandes pour le conteneur mongo 
   (Démarrer) ==> docker-compose --env-file .env  -f ./docker/docker-compose-mongodb.yml up
