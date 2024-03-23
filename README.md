@@ -1,3 +1,13 @@
+# Participants
+  - FOUMBI DJOMO Ranyl Josué
+  - 
+
+# commandes pour le conteneur mongo 
+  (Démarrer) ==> docker-compose --env-file .env  -f ./docker/docker-compose-mongodb.yml up
+  (Arrêter) ==> docker-compose --env-file .env  -f ./docker/docker-compose-mongodb.yml down
+
+
+
 # Évaluation finale
 Pour ce test final vous allez être évalués sur votre maîtrise du framework NestJS. Ce projet, qui est une TodoList et qu'il vous faudra dupliquer (fork), contient un certain nombre de tests automatisés. Chacun d'entre eux couvre une fonctionnalité spécifique : création d'un utilisateur, création d'une tâche, vérification que le serveur renvoie une erreur dans tel ou tel cas etc.
 
