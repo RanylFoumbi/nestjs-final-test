@@ -5,7 +5,7 @@ import { User } from 'src/infrastructure/database/schema/user.schema';
 
 @Injectable()
 export class UserService {
-    constructor(@InjectModel(User.name) private userModel: Model<User>) { }
+    constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
     addUser(email: string): Promise<User> {
         try {

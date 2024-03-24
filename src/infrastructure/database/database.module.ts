@@ -1,26 +1,17 @@
-import { DynamicModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { DatabaseService } from './database.service';
+import { ConfigurationModule } from '../configuration/configuration.module';
+import { ConfigurationService } from '../configuration/configuration.service';
 
-@Module({})
-export class DatabaseModule {
-  static forRoot(options: Record<string, string>): DynamicModule {
-    const port: string = options.port;
-    const dbName: string = options.dbName;
-    return {
-      module: DatabaseModule,
-      providers: [
-        {
-          provide: DatabaseService,
-          useClass: DatabaseService,
-        }
-      ],
-      imports: [
-        MongooseModule.forRoot(`mongodb://localhost:${port}/${dbName}`),
-      ],
-      exports: [
-        MongooseModule
-      ],
-    };
-  }
-}
+@Module({
+    imports: [
+        MongooseModule.forRootAsync({
+            imports: [ConfigurationModule],
+            useFactory: async (configService: ConfigurationService) => ({
+                uri: `mongodb://localhost:${configService.databaseConfig.DATABASE_PORT}/${configService.databaseConfig.DATABASE_NAME}`,
+            }),
+            inject: [ConfigurationService],
+        }),
+    ],
+})
+export class DatabaseModule {}

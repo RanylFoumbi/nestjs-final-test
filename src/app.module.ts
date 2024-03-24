@@ -4,6 +4,6 @@ import { DatabaseModule } from './infrastructure/database/database.module';
 import { Module } from '@nestjs/common';
 
 @Module({
-    imports: [AppRoutingModule, ConfigurationModule, DatabaseModule.forRoot({ port: "24000", dbName: "nestjs-final-test-db"})],
+    imports: [AppRoutingModule, ConfigurationModule, DatabaseModule],
 })
 export class AppModule {}
