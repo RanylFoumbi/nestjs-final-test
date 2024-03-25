@@ -1,7 +1,7 @@
-import { Injectable, NotImplementedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { User } from 'src/infrastructure/database/schema/user.schema';
+import { User } from '../infrastructure/database/schema/user.schema';
 
 @Injectable()
 export class UserService {
@@ -9,20 +9,26 @@ export class UserService {
 
     addUser(email: string): Promise<User> {
         try {
-            console.log(`Adding user with email: ${email}`);
             const user = new this.userModel({ email });
             return user.save();
         } catch (error) {
-            console.error(error);
             return Promise.reject(error);
         }
     }
 
-    getUser(email: string): Promise<unknown> {
-        throw new NotImplementedException();
+    async getUser(email: string): Promise<User> {
+        try {
+            return this.userModel.findOne({ email }).exec();
+        } catch (error) {
+            return Promise.reject(error);
+        }
     }
 
-    resetData(): Promise<void> {
-        throw new NotImplementedException();
+    async resetData(): Promise<void> {
+        try {
+            await this.userModel.deleteMany({}).exec();
+        } catch (error) {
+            return Promise.reject(error);
+        }
     }
 }
