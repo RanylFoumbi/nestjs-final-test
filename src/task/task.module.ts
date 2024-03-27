@@ -6,21 +6,12 @@ import {
 } from '../infrastructure/database/schema/task.schema';
 import { TaskService } from './task.service';
 import { TaskController } from './task.controller';
-import { UserModule } from '../user/user.module';
-import {
-    User,
-    UserSchema,
-} from '../infrastructure/database/schema/user.schema';
-import { UserService } from '../user/user.service';
 
 @Module({
     imports: [
-        MongooseModule.forFeature([
-            { name: Task.name, schema: TaskSchema },
-            { name: User.name, schema: UserSchema }
-        ])
+        MongooseModule.forFeature([{ name: Task.name, schema: TaskSchema }]),
     ],
     controllers: [TaskController],
-    providers: [TaskService, UserService],
+    providers: [TaskService],
 })
 export class TaskModule {}

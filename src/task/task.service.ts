@@ -27,7 +27,6 @@ export class TaskService {
     async getUserTasks(userId: string): Promise<Task[]> {
         try {
             const tasks = await this.taskModel.find({ userId }).exec();
-            console.log({ tasks });
             return tasks;
         } catch (error) {
             return Promise.reject(error);

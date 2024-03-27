@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumberString, IsPositive } from 'class-validator';
+import { IsNotEmpty, IsNumberString } from 'class-validator';
 
 export class CreateTaskDto {
     @IsNotEmpty()

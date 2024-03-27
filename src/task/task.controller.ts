@@ -1,29 +1,42 @@
-import { Controller, Post, Body, Get, Param, HttpException, HttpStatus } from '@nestjs/common';
+import {
+    Controller,
+    Post,
+    Body,
+    Get,
+    Param,
+    HttpException,
+    HttpStatus,
+} from '@nestjs/common';
 import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/task.dto';
 import { Task } from '../infrastructure/database/schema/task.schema';
-import { UserService } from '../user/user.service';
+import { mongo } from 'mongoose';
 
 @Controller()
 export class TaskController {
-    constructor(
-        private readonly taskService: TaskService,
-        private readonly userService: UserService
-    ) {}
+    constructor(private readonly taskService: TaskService) {}
 
     @Post()
-    async addTask(@Body() payload: CreateTaskDto): Promise<void> {
+    async addTask(@Body() payload: CreateTaskDto): Promise<Task> {
+        const isUserIdValid = mongo.ObjectId.isValid(payload.userId);
         try {
-            if (!payload.name || !payload.userId || !payload.priority)
-                throw new HttpException("Missing required fields", HttpStatus.BAD_REQUEST);
-            const user = await this.userService.getUser(payload.userId);
-            if (!user)
-                throw new HttpException("User not found", HttpStatus.BAD_REQUEST);
-            await this.taskService.addTask(
+            if (
+                !payload.name ||
+                !isUserIdValid ||
+                !payload.priority ||
+                payload.priority === null ||
+                payload.priority === undefined
+            )
+                throw new HttpException(
+                    'Missing required fields',
+                    HttpStatus.BAD_REQUEST,
+                );
+            const task = await this.taskService.addTask(
                 payload.name,
                 payload.userId,
                 payload.priority,
             );
+            return task;
         } catch (error) {
             throw error;
         }
@@ -38,9 +51,15 @@ export class TaskController {
         }
     }
 
-    @Get(":userId")
-    async getUserTasks(@Param("userId") userId: string ): Promise<Task[]> {
+    @Get('user/:userId')
+    async getUserTasks(@Param('userId') userId: string): Promise<Task[]> {
         try {
+            const isUserIdValid = mongo.ObjectId.isValid(userId);
+            if (!isUserIdValid)
+                throw new HttpException(
+                    'Invalid userId provided',
+                    HttpStatus.BAD_REQUEST,
+                );
             return this.taskService.getUserTasks(userId);
         } catch (error) {
             return Promise.reject(error);
