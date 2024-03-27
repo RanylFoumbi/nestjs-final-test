@@ -11,16 +11,16 @@ import {
     User,
     UserSchema,
 } from '../infrastructure/database/schema/user.schema';
+import { UserService } from '../user/user.service';
 
 @Module({
     imports: [
         MongooseModule.forFeature([
             { name: Task.name, schema: TaskSchema },
-            { name: User.name, schema: UserSchema },
-        ]),
-        UserModule,
+            { name: User.name, schema: UserSchema }
+        ])
     ],
     controllers: [TaskController],
-    providers: [TaskService],
+    providers: [TaskService, UserService],
 })
 export class TaskModule {}

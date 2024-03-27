@@ -7,7 +7,6 @@ export class CreateTaskDto {
     @IsNotEmpty()
     userId: string;
 
-    @IsPositive()
     @IsNotEmpty()
     @IsNumberString()
     priority: number;

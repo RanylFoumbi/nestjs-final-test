@@ -1,26 +1,35 @@
-import { Controller, Post, Body, Get } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, HttpException, HttpStatus } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/task.dto';
-import { Task } from 'src/infrastructure/database/schema/task.schema';
+import { Task } from '../infrastructure/database/schema/task.schema';
+import { UserService } from '../user/user.service';
 
 @Controller()
 export class TaskController {
-    constructor(private readonly taskService: TaskService) {}
+    constructor(
+        private readonly taskService: TaskService,
+        private readonly userService: UserService
+    ) {}
 
-    @Post('/task')
+    @Post()
     async addTask(@Body() payload: CreateTaskDto): Promise<void> {
         try {
+            if (!payload.name || !payload.userId || !payload.priority)
+                throw new HttpException("Missing required fields", HttpStatus.BAD_REQUEST);
+            const user = await this.userService.getUser(payload.userId);
+            if (!user)
+                throw new HttpException("User not found", HttpStatus.BAD_REQUEST);
             await this.taskService.addTask(
                 payload.name,
                 payload.userId,
                 payload.priority,
             );
         } catch (error) {
-            return Promise.reject(error);
+            throw error;
         }
     }
 
-    @Post('/reset')
+    @Post()
     async resetData(): Promise<void> {
         try {
             await this.taskService.resetData();
@@ -29,10 +38,10 @@ export class TaskController {
         }
     }
 
-    @Get('/tasks')
-    async getUserTasks(@Body() payload: { userId: string }): Promise<Task[]> {
+    @Get(":userId")
+    async getUserTasks(@Param("userId") userId: string ): Promise<Task[]> {
         try {
-            await this.taskService.getUserTasks(payload.userId);
+            return this.taskService.getUserTasks(userId);
         } catch (error) {
             return Promise.reject(error);
         }
